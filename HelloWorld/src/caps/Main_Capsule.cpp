@@ -34,12 +34,16 @@ void Main_Capsule::handleTimeout(TimeoutMessage timeoutMessage){
 void Main_Capsule::start(){
     _updateTimerId = _timerRunnerPtr->informEvery(_id, _updateTime);
     if(!_gui.update()){
-        _capsuleRunnerPtr->stop();
-        _timerRunnerPtr->cancelTimer(_updateTimerId);
-        _state = State::End;
+        stop();
         return;
     }
     _state = State::Running;
+}
+
+void Main_Capsule::stop(){
+    _capsuleRunnerPtr->stop();
+    _timerRunnerPtr->cancelTimer(_updateTimerId);
+    _state = State::End;
 }
 
 void Main_Capsule::update(int timeouts){
@@ -48,10 +52,7 @@ void Main_Capsule::update(int timeouts){
     }
 
     if(!_gui.update()){
-        _capsuleRunnerPtr->stop();
-        _timerRunnerPtr->cancelTimer(_updateTimerId);
-        _state = State::End;
+        stop();
         return;
     }
-    _state = State::Running;
 }

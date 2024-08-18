@@ -18,6 +18,7 @@ class Main_Capsule: public Capsule{
         void handleMessage(Message message);
     
     private:
+        void stop();
 
         void handleTimeout(TimeoutMessage message);
         void update(int timeouts);
