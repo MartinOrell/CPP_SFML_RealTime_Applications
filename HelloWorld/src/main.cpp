@@ -2,7 +2,6 @@
 #include "CapsuleRunner.h"
 #include <memory>
 #include <thread>
-#include <vector>
 #include "Main_Capsule.h"
 
 int main(){

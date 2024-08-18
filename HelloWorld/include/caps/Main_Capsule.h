@@ -2,8 +2,6 @@
 
 #include "Capsule.h"
 
-#include <string>
-#include <iostream>
 #include "Message.h"
 #include "SendMessage.h"
 #include <chrono>

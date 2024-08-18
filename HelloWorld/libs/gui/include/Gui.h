@@ -1,8 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <memory>
 #include <SFML/Graphics.hpp>
 
 class Gui{
