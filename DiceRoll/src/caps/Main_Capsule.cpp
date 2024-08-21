@@ -1,7 +1,7 @@
 #include "Main_Capsule.h"
 #include "CapsuleRunner.h"
 
-Main_Capsule::Main_Capsule(int id, CapsuleRunner* capsuleRunnerPtr, CapsuleRunner* timerRunnerPtr, int fps)
+Main_Capsule::Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps)
 {
     _id = id;
     _capsuleRunnerPtr = capsuleRunnerPtr;
@@ -17,26 +17,26 @@ void Main_Capsule::connect(int diceId){
     _diceId = diceId;
 }
 
-RespondDiceValue Main_Capsule::invokeDiceValue(int toId){
-    VoidMessage request = VoidMessage::RequestDiceValue;
-    SendMessage sendMessage;
+mrt::RespondDiceValue Main_Capsule::invokeDiceValue(int toId){
+    mrt::VoidMessage request = mrt::VoidMessage::RequestDiceValue;
+    mrt::SendMessage sendMessage;
     sendMessage.toId = toId;
     sendMessage.message = request;
-    Message receivedMessage = _capsuleRunnerPtr->invokeMessage(sendMessage);
-    assert(std::holds_alternative<RespondDiceValue>(receivedMessage));
-    return std::get<RespondDiceValue>(receivedMessage);
+    mrt::Message receivedMessage = _capsuleRunnerPtr->invokeMessage(sendMessage);
+    assert(std::holds_alternative<mrt::RespondDiceValue>(receivedMessage));
+    return std::get<mrt::RespondDiceValue>(receivedMessage);
 }
 
-void Main_Capsule::handleMessage(Message message){
-    if(std::holds_alternative<TimeoutMessage>(message)){
-        handleTimeout(std::get<TimeoutMessage>(message));
+void Main_Capsule::handleMessage(mrt::Message message){
+    if(std::holds_alternative<mrt::TimeoutMessage>(message)){
+        handleTimeout(std::get<mrt::TimeoutMessage>(message));
         return;
     }
     
     throw std::invalid_argument("Main_Capsule unable to handle message with index " + std::to_string(message.index()));
 }
 
-void Main_Capsule::handleTimeout(TimeoutMessage timeoutMessage){
+void Main_Capsule::handleTimeout(mrt::TimeoutMessage timeoutMessage){
     if(_updateTimerId == timeoutMessage.timerId){
         update(timeoutMessage.timeouts);
         return;

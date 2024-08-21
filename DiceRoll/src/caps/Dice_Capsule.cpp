@@ -1,7 +1,7 @@
 #include "Dice_Capsule.h"
 #include "CapsuleRunner.h"
 
-Dice_Capsule::Dice_Capsule(int id, CapsuleRunner* capsuleRunnerPtr, CapsuleRunner* timerRunnerPtr, int rollSpeed, int min, int max)
+Dice_Capsule::Dice_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int rollSpeed, int min, int max)
 {
     _id = id;
     _capsuleRunnerPtr = capsuleRunnerPtr;
@@ -16,10 +16,10 @@ int Dice_Capsule::getId(){
     return _id;
 }
 
-Message Dice_Capsule::handleInvokeMessage(Message message){
-    if(std::holds_alternative<VoidMessage>(message)){
-        VoidMessage voidMessage = std::get<VoidMessage>(message);
-        if(voidMessage == VoidMessage::RequestDiceValue){
+mrt::Message Dice_Capsule::handleInvokeMessage(mrt::Message message){
+    if(std::holds_alternative<mrt::VoidMessage>(message)){
+        mrt::VoidMessage voidMessage = std::get<mrt::VoidMessage>(message);
+        if(voidMessage == mrt::VoidMessage::RequestDiceValue){
             return invokeDiceValueResponse();
         }
         throw std::invalid_argument("Dice_Capsule unable to invoke voidMessage with index " + std::to_string(voidMessage));
@@ -27,20 +27,20 @@ Message Dice_Capsule::handleInvokeMessage(Message message){
     throw std::invalid_argument("Dice_Capsule unable to invoke message with index " + std::to_string(message.index()));
 }
 
-Message Dice_Capsule::invokeDiceValueResponse(){
-    RespondDiceValue response;
+mrt::Message Dice_Capsule::invokeDiceValueResponse(){
+    mrt::RespondDiceValue response;
     response.value = _value;
     return response;
 }
 
-void Dice_Capsule::handleMessage(Message message){
-    if(std::holds_alternative<TimeoutMessage>(message)){
-        handleTimeout(std::get<TimeoutMessage>(message));
+void Dice_Capsule::handleMessage(mrt::Message message){
+    if(std::holds_alternative<mrt::TimeoutMessage>(message)){
+        handleTimeout(std::get<mrt::TimeoutMessage>(message));
         return;
     }
-    if(std::holds_alternative<VoidMessage>(message)){
-        VoidMessage voidMessage = std::get<VoidMessage>(message);
-        if(voidMessage == VoidMessage::EndMessage){
+    if(std::holds_alternative<mrt::VoidMessage>(message)){
+        mrt::VoidMessage voidMessage = std::get<mrt::VoidMessage>(message);
+        if(voidMessage == mrt::VoidMessage::EndMessage){
             stop();
             return;
         }
@@ -49,7 +49,7 @@ void Dice_Capsule::handleMessage(Message message){
     throw std::invalid_argument("Dice_Capsule unable to handle message with index " + std::to_string(message.index()));
 }
 
-void Dice_Capsule::handleTimeout(TimeoutMessage timeoutMessage){
+void Dice_Capsule::handleTimeout(mrt::TimeoutMessage timeoutMessage){
     if(_updateTimerId == timeoutMessage.timerId){
         update(timeoutMessage.timeouts);
         return;

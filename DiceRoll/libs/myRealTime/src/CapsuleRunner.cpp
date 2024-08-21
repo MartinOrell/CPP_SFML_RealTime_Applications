@@ -1,6 +1,8 @@
 #include "CapsuleRunner.h"
 #include "MessageManager.h"
 
+using namespace mrt;
+
 CapsuleRunner::CapsuleRunner(int id, MessageManager* messageManagerPtr)
 :   _id{id},
     _messageManagerPtr{messageManagerPtr},
