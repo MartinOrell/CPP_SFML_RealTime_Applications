@@ -34,17 +34,17 @@ int main(){
     profiles.push_back(tortoiseP);
     profiles.push_back(hareP);
 
-    MessageManager messageManager;
+    mrt::MessageManager messageManager;
 
     int nextCapsuleId = 0;
 
-    CapsuleRunner mainCapsuleRunner(nextCapsuleId++, &messageManager);
+    mrt::CapsuleRunner mainCapsuleRunner(nextCapsuleId++, &messageManager);
 
-    std::vector<CapsuleRunner> racerCapsuleRunners;
+    std::vector<mrt::CapsuleRunner> racerCapsuleRunners;
     for(int i = 0; i < numRacerThreads; i++){
-        racerCapsuleRunners.push_back(CapsuleRunner(nextCapsuleId++, &messageManager));
+        racerCapsuleRunners.push_back(mrt::CapsuleRunner(nextCapsuleId++, &messageManager));
     }
-    CapsuleRunner timerRunner(nextCapsuleId++, &messageManager);
+    mrt::CapsuleRunner timerRunner(nextCapsuleId++, &messageManager);
     auto main = std::make_unique<Main_Capsule>(nextCapsuleId++, &mainCapsuleRunner, &timerRunner, fps, goal);
     for(int i = 0; i < numRacers; i++){
         auto racer = std::make_unique<Racer_Capsule>(nextCapsuleId++, &racerCapsuleRunners.at(i%numRacerThreads), &timerRunner, profiles.at(i%profiles.size()), goal);

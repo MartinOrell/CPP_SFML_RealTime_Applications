@@ -1,6 +1,6 @@
 #include "Racer_Capsule.h"
 
-Racer_Capsule::Racer_Capsule(int id, CapsuleRunner* capsuleRunnerPtr, CapsuleRunner* timerRunnerPtr, RacerProfile racerProfile, int goal){
+Racer_Capsule::Racer_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, RacerProfile racerProfile, int goal){
     _id = id;
     _capsuleRunnerPtr = capsuleRunnerPtr;
     _timerRunnerPtr = timerRunnerPtr;
@@ -23,21 +23,21 @@ std::string Racer_Capsule::getAsciiFilename(){
     return _profile.asciiFilename;
 }
 
-void Racer_Capsule::handleMessage(Message message){
-    if(std::holds_alternative<TimeoutMessage>(message)){
-        handleTimeout(std::get<TimeoutMessage>(message));
+void Racer_Capsule::handleMessage(mrt::Message message){
+    if(std::holds_alternative<mrt::TimeoutMessage>(message)){
+        handleTimeout(std::get<mrt::TimeoutMessage>(message));
         return;
     }
-    else if(std::holds_alternative<VoidMessage>(message)){
-        switch(std::get<VoidMessage>(message)){
-            case VoidMessage::StartSignal:
+    else if(std::holds_alternative<mrt::VoidMessage>(message)){
+        switch(std::get<mrt::VoidMessage>(message)){
+            case mrt::VoidMessage::StartSignal:
                 handleStartSignal();
                 return;
-            case VoidMessage::DistanceRequest:
+            case mrt::VoidMessage::DistanceRequest:
                 handleDistanceRequest();
                 return;
             default:
-                throw std::invalid_argument("Racer_Capsule[" + std::to_string(_id) + "] unable to handle voidMessage with id " + std::to_string(std::get<VoidMessage>(message)));
+                throw std::invalid_argument("Racer_Capsule[" + std::to_string(_id) + "] unable to handle voidMessage with id " + std::to_string(std::get<mrt::VoidMessage>(message)));
         }
     }
     throw std::invalid_argument("Racer_Capsule[" + std::to_string(_id) + "] unable to handle message with index " + std::to_string(message.index()));
@@ -48,19 +48,19 @@ void Racer_Capsule::connect(int mainId){
 }
 
 void Racer_Capsule::sendDistanceResponse(int toId){
-    DistanceResponse outMessage;
+    mrt::DistanceResponse outMessage;
     outMessage.fromId = _id;
     outMessage.dist = _numSteps;
-    SendMessage sendMessage;
+    mrt::SendMessage sendMessage;
     sendMessage.toId = toId;
     sendMessage.message = outMessage;
     _capsuleRunnerPtr->sendMessage(sendMessage);
 }
 
 void Racer_Capsule::sendGoalReached(int toId){
-    GoalReached outMessage;
+    mrt::GoalReached outMessage;
     outMessage.fromId = _id;
-    SendMessage sendMessage;
+    mrt::SendMessage sendMessage;
     sendMessage.toId = toId;
     sendMessage.message = outMessage;
     _capsuleRunnerPtr->sendMessage(sendMessage);
@@ -70,7 +70,7 @@ void Racer_Capsule::start(){
     _state = State::WaitForStartSignal;
 }
 
-void Racer_Capsule::handleTimeout(TimeoutMessage timeoutMessage){
+void Racer_Capsule::handleTimeout(mrt::TimeoutMessage timeoutMessage){
     if(_waitTimerId == timeoutMessage.timerId){
         handleWaitTimerTimeout(timeoutMessage.timeouts);
     }

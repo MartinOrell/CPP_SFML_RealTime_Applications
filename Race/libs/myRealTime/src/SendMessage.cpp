@@ -1,5 +1,7 @@
 #include "SendMessage.h"
 
+using namespace mrt;
+
 bool SendMessage::operator==(const SendMessage& rhs){
     
     if(std::holds_alternative<TimeoutMessage>(message) &&

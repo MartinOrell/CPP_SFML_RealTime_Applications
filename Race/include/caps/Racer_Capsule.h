@@ -6,13 +6,13 @@
 #include "CapsuleRunner.h"
 #include "RacerProfile.h"
 
-class Racer_Capsule: public Capsule{
+class Racer_Capsule: public mrt::Capsule{
     public:
-        Racer_Capsule(int id, CapsuleRunner* capsuleRunnerPtr, CapsuleRunner* timerRunnerPtr, RacerProfile racerProfile, int goal);
+        Racer_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, RacerProfile racerProfile, int goal);
         int getId();
         std::string getName();
         std::string getAsciiFilename();
-        void handleMessage(Message message);
+        void handleMessage(mrt::Message message);
         void start();
 
         void connect(int mainId);
@@ -20,7 +20,7 @@ class Racer_Capsule: public Capsule{
         void sendDistanceResponse(int toId);
         void sendGoalReached(int toId);
 
-        void handleTimeout(TimeoutMessage timeoutMessage);
+        void handleTimeout(mrt::TimeoutMessage timeoutMessage);
         void handleStartSignal();
         void handleDistanceRequest();
         void handleWaitTimerTimeout(int timeouts);
@@ -28,8 +28,8 @@ class Racer_Capsule: public Capsule{
 
         int _id;
         int _mainId;
-        CapsuleRunner* _capsuleRunnerPtr;
-        CapsuleRunner* _timerRunnerPtr;
+        mrt::CapsuleRunner* _capsuleRunnerPtr;
+        mrt::CapsuleRunner* _timerRunnerPtr;
         RacerProfile _profile;
         int _waitTimerId;
         int _stepTimerId;

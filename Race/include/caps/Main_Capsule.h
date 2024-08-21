@@ -10,14 +10,16 @@
 #include <stdexcept>
 #include "RacePrinter.h"
 
-class CapsuleRunner;
+namespace mrt{
+    class CapsuleRunner;
+}
 
-class Main_Capsule: public Capsule{
+class Main_Capsule: public mrt::Capsule{
     public:
-        Main_Capsule(int id, CapsuleRunner* capsuleRunnerPtr, CapsuleRunner* timerRunnerPtr, int fps, int goal);
+        Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps, int goal);
         int getId();
         void start();
-        void handleMessage(Message message);
+        void handleMessage(mrt::Message message);
         
         void connectRacer(int id, std::string name, std::string filename);
     
@@ -25,18 +27,18 @@ class Main_Capsule: public Capsule{
         void sendStartRaceSignal(int toId);
         void sendDistanceRequest(int toId);
 
-        void handleTimeout(TimeoutMessage message);
+        void handleTimeout(mrt::TimeoutMessage message);
 
         void handleUpdateTimerTimeout(int timeouts);
-        void handleDistanceResponse(DistanceResponse message);
-        void handleGoalReachedMessage(GoalReached message);
+        void handleDistanceResponse(mrt::DistanceResponse message);
+        void handleGoalReachedMessage(mrt::GoalReached message);
 
         int _id;
         std::vector<int> _racerIds;
         std::vector<std::string> _racerNames;
         std::vector<int> _racersXPos;
-        CapsuleRunner* _capsuleRunnerPtr;
-        CapsuleRunner* _timerRunnerPtr;
+        mrt::CapsuleRunner* _capsuleRunnerPtr;
+        mrt::CapsuleRunner* _timerRunnerPtr;
         int _updateTimerId;
         std::chrono::steady_clock::duration _updateTime;
         RacePrinter _racePrinter;

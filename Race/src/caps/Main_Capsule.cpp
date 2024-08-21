@@ -1,7 +1,7 @@
 #include "Main_Capsule.h"
 #include "CapsuleRunner.h"
 
-Main_Capsule::Main_Capsule(int id, CapsuleRunner* capsuleRunnerPtr, CapsuleRunner* timerRunnerPtr, int fps, int goal)
+Main_Capsule::Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps, int goal)
 : _racePrinter(goal)
 {
     _id = id;
@@ -16,16 +16,16 @@ int Main_Capsule::getId(){
 }
 
 void Main_Capsule::sendStartRaceSignal(int toId){
-    VoidMessage outMessage = VoidMessage::StartSignal;
-    SendMessage sendMessage;
+    mrt::VoidMessage outMessage = mrt::VoidMessage::StartSignal;
+    mrt::SendMessage sendMessage;
     sendMessage.toId = toId;
     sendMessage.message = outMessage;
     _capsuleRunnerPtr->sendMessage(sendMessage);
 }
 
 void Main_Capsule::sendDistanceRequest(int toId){
-    VoidMessage outMessage = VoidMessage::DistanceRequest;
-    SendMessage sendMessage;
+    mrt::VoidMessage outMessage = mrt::VoidMessage::DistanceRequest;
+    mrt::SendMessage sendMessage;
     sendMessage.toId = toId;
     sendMessage.message = outMessage;
     _capsuleRunnerPtr->sendMessage(sendMessage);
@@ -38,24 +38,24 @@ void Main_Capsule::connectRacer(int id, std::string name, std::string filename){
     _racePrinter.addRacer(id, filename);
 }
 
-void Main_Capsule::handleMessage(Message message){
-    if(std::holds_alternative<TimeoutMessage>(message)){
-        handleTimeout(std::get<TimeoutMessage>(message));
+void Main_Capsule::handleMessage(mrt::Message message){
+    if(std::holds_alternative<mrt::TimeoutMessage>(message)){
+        handleTimeout(std::get<mrt::TimeoutMessage>(message));
         return;
     }
-    else if(std::holds_alternative<DistanceResponse>(message)){
-        handleDistanceResponse(std::get<DistanceResponse>(message));
+    else if(std::holds_alternative<mrt::DistanceResponse>(message)){
+        handleDistanceResponse(std::get<mrt::DistanceResponse>(message));
         return;
     }
-    else if(std::holds_alternative<GoalReached>(message)){
-        handleGoalReachedMessage(std::get<GoalReached>(message));
+    else if(std::holds_alternative<mrt::GoalReached>(message)){
+        handleGoalReachedMessage(std::get<mrt::GoalReached>(message));
         return;
     }
     
     throw std::invalid_argument("Main_Capsule unable to handle message with index " + std::to_string(message.index()));
 }
 
-void Main_Capsule::handleTimeout(TimeoutMessage timeoutMessage){
+void Main_Capsule::handleTimeout(mrt::TimeoutMessage timeoutMessage){
     if(_updateTimerId == timeoutMessage.timerId){
         handleUpdateTimerTimeout(timeoutMessage.timeouts);
     }
@@ -87,7 +87,7 @@ void Main_Capsule::handleUpdateTimerTimeout(int timeouts){
     _state = State::GetPositionsDuringRace;
 }
 
-void Main_Capsule::handleDistanceResponse(DistanceResponse message){
+void Main_Capsule::handleDistanceResponse(mrt::DistanceResponse message){
     switch(_state){
         case State::GetPositionsDuringRace:
         case State::GetPositionsAfterRace:
@@ -127,7 +127,7 @@ void Main_Capsule::handleDistanceResponse(DistanceResponse message){
     }
 }
 
-void Main_Capsule::handleGoalReachedMessage(GoalReached message){
+void Main_Capsule::handleGoalReachedMessage(mrt::GoalReached message){
     switch(_state){
         case State::WaitForUpdate:
         case State::GetPositionsDuringRace:

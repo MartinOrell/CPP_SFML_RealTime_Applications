@@ -1,5 +1,7 @@
 #include "MessageManager.h"
 
+using namespace mrt;
+
 MessageManager::MessageManager(bool allowCrossInvoke){
     _allowCrossInvoke = allowCrossInvoke; //allowing invoke through other capsuleRunners might not be thread safe
 }

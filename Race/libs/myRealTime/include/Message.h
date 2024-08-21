@@ -3,31 +3,35 @@
 #include <variant>
 #include "Timer.h"
 
-struct TimeoutMessage{
-    int timerId;
-    int timeouts;
-};
+namespace mrt{
 
-struct CancelTimer{
-    int id;
-};
+    struct TimeoutMessage{
+        int timerId;
+        int timeouts;
+    };
 
-enum VoidMessage{EndMessage, StartSignal, DistanceRequest};
+    struct CancelTimer{
+        int id;
+    };
 
-struct DistanceResponse{
-    int fromId;
-    int dist;
-};
+    enum VoidMessage{EndMessage, StartSignal, DistanceRequest};
 
-struct GoalReached{
-    int fromId;
-};
+    struct DistanceResponse{
+        int fromId;
+        int dist;
+    };
 
-typedef std::variant<
-    TimeoutMessage,
-    Timer, //defined in Timer.h
-    CancelTimer,
-    VoidMessage,
-    DistanceResponse,
-    GoalReached
+    struct GoalReached{
+        int fromId;
+    };
+
+    typedef std::variant<
+        TimeoutMessage,
+        Timer, //defined in Timer.h
+        CancelTimer,
+        VoidMessage,
+        DistanceResponse,
+        GoalReached
     > Message;
+
+}
