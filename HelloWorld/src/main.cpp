@@ -8,12 +8,12 @@ int main(){
 
     int fps = 60;
 
-    MessageManager messageManager;
+    mrt::MessageManager messageManager;
 
     int nextCapsuleId = 0;
 
-    CapsuleRunner capsuleRunner(nextCapsuleId++, &messageManager);
-    CapsuleRunner timerRunner(nextCapsuleId++, &messageManager);
+    mrt::CapsuleRunner capsuleRunner(nextCapsuleId++, &messageManager);
+    mrt::CapsuleRunner timerRunner(nextCapsuleId++, &messageManager);
     auto main = std::make_unique<Main_Capsule>(nextCapsuleId++, &capsuleRunner, &timerRunner, fps);
 
     capsuleRunner.addCapsule(std::move(main));

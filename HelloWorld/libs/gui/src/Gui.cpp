@@ -1,4 +1,5 @@
 #include "Gui.h"
+#include <SFML/Graphics.hpp>
 
 Gui::Gui()
 : _window{ { 800u, 500u }, "Hello World!" }

@@ -8,24 +8,26 @@
 #include <stdexcept>
 #include "Gui.h"
 
-class CapsuleRunner;
+namespace mrt{
+    class CapsuleRunner;
+}
 
-class Main_Capsule: public Capsule{
+class Main_Capsule: public mrt::Capsule{
     public:
-        Main_Capsule(int id, CapsuleRunner* capsuleRunnerPtr, CapsuleRunner* timerRunnerPtr, int fps);
+        Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps);
         int getId();
         void start();
-        void handleMessage(Message message);
+        void handleMessage(mrt::Message message);
     
     private:
         void stop();
 
-        void handleTimeout(TimeoutMessage message);
+        void handleTimeout(mrt::TimeoutMessage message);
         void update(int timeouts);
 
         int _id;
-        CapsuleRunner* _capsuleRunnerPtr;
-        CapsuleRunner* _timerRunnerPtr;
+        mrt::CapsuleRunner* _capsuleRunnerPtr;
+        mrt::CapsuleRunner* _timerRunnerPtr;
         int _updateTimerId;
         std::chrono::steady_clock::duration _updateTime;
         Gui _gui;

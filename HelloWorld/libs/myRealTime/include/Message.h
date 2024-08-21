@@ -3,20 +3,24 @@
 #include <variant>
 #include "Timer.h"
 
-struct TimeoutMessage{
-    int timerId;
-    int timeouts;
-};
+namespace mrt{
 
-struct CancelTimer{
-    int id;
-};
+    struct TimeoutMessage{
+        int timerId;
+        int timeouts;
+    };
 
-enum VoidMessage{EndMessage};
+    struct CancelTimer{
+        int id;
+    };
 
-typedef std::variant<
-    TimeoutMessage,
-    Timer, //defined in Timer.h
-    CancelTimer,
-    VoidMessage
-    > Message;
+    enum VoidMessage{EndMessage};
+
+    typedef std::variant<
+        TimeoutMessage,
+        Timer, //defined in Timer.h
+        CancelTimer,
+        VoidMessage
+        > Message;
+
+}

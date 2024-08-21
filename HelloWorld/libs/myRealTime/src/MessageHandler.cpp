@@ -1,5 +1,7 @@
 #include "MessageHandler.h"
 
+using namespace mrt;
+
 MessageHandler::MessageHandler(){
     _waitForMessageMutex.lock();
 }
