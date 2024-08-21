@@ -2,6 +2,7 @@
 
 #include "Capsule.h"
 
+#include "CapsuleRunner.h"
 #include <string>
 #include <iostream>
 #include "Message.h"
@@ -9,10 +10,6 @@
 #include <chrono>
 #include <stdexcept>
 #include "RacePrinter.h"
-
-namespace mrt{
-    class CapsuleRunner;
-}
 
 class Main_Capsule: public mrt::Capsule{
     public:
