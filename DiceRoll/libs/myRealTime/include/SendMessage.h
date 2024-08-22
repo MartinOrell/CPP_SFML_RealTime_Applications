@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Message.h"
-#include <variant>
 
 namespace mrt{
 

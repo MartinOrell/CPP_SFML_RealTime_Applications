@@ -1,16 +1,15 @@
 #pragma once
 
-#include <variant>
-#include <cassert>
 #include <memory>
+#include <vector>
 #include "Message.h"
-#include "SendMessage.h"
 #include "MessageHandler.h"
-#include "Capsule.h"
 
 namespace mrt{
 
+    class Capsule;
     class MessageManager;
+    struct SendMessage;
 
     class CapsuleRunner{
         public:
@@ -20,15 +19,15 @@ namespace mrt{
             bool isResponsible(int id);
             void run();
             void stop();
-            void sendMessage(SendMessage message);
-            void mergeOrSendMessage(SendMessage);
-            Message invokeMessage(SendMessage request);
+            void sendMessage(const SendMessage& message);
+            void mergeOrSendMessage(const SendMessage&);
+            Message invokeMessage(const SendMessage& request);
             int informIn(int, std::chrono::steady_clock::duration);
             int informEvery(int, std::chrono::steady_clock::duration);
             void cancelTimer(int);
         private:
-            bool handleMessage(SendMessage message);
-            bool handleMessageToMe(Message message);
+            bool handleMessage(const SendMessage& message);
+            bool handleMessageToMe(const Message& message);
 
             int _id;
             MessageHandler _messageHandler;

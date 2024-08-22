@@ -14,8 +14,8 @@ class Dice_Capsule: public mrt::Capsule{
         int getId();
         void start();
         void stop();
-        void handleMessage(mrt::Message message);
-        mrt::Message handleInvokeMessage(mrt::Message message);
+        void handleMessage(const mrt::Message& message);
+        mrt::Message handleInvokeMessage(const mrt::Message& message);
     
     private:
 

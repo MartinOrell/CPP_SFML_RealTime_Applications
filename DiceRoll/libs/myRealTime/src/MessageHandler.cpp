@@ -1,5 +1,10 @@
 #include "MessageHandler.h"
 
+#include "SendMessage.h"
+#include "Timer.h"
+
+#include <algorithm>
+
 using namespace mrt;
 
 MessageHandler::MessageHandler(){
@@ -13,7 +18,7 @@ MessageHandler::MessageHandler(MessageHandler&& rhs)
     _waitForMessageMutex.lock();
 }
 
-void MessageHandler::addTimer(Timer timer){
+void MessageHandler::addTimer(const Timer& timer){
     _mutex.lock();
     _timers.push_back(timer);
     _mutex.unlock();
@@ -25,7 +30,7 @@ void MessageHandler::removeTimer(int id){
     _mutex.unlock();
 }
 
-void MessageHandler::sendMessage(SendMessage message){
+void MessageHandler::sendMessage(const SendMessage& message){
     _mutex.lock();
     _messageStack.push_back(message);
     _mutex.unlock();
@@ -33,7 +38,7 @@ void MessageHandler::sendMessage(SendMessage message){
 }
 
 //Requires equal operator and merge function for SendMessage
-void MessageHandler::mergeOrSendMessage(SendMessage message){
+void MessageHandler::mergeOrSendMessage(const SendMessage& message){
     _mutex.lock();
     auto it = std::find(_messageStack.begin(), _messageStack.end(), message);
     if(it==_messageStack.end()){

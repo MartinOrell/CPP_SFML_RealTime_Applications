@@ -15,13 +15,13 @@ class Main_Capsule: public mrt::Capsule{
         int getId();
         void start();
         void stop();
-        void handleMessage(mrt::Message message);
+        void handleMessage(const mrt::Message& message);
     
         void connect(int diceId);
     private:
         mrt::RespondDiceValue invokeDiceValue(int toId);
 
-        void handleTimeout(mrt::TimeoutMessage message);
+        void handleTimeout(const mrt::TimeoutMessage& message);
         void update(int timeouts);
 
         int _id;
