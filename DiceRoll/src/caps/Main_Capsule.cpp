@@ -1,5 +1,9 @@
 #include "Main_Capsule.h"
 
+#include "CapsuleRunner.h"
+
+#include <chrono>
+#include <stdexcept>
 #include <cassert>
 
 Main_Capsule::Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps)

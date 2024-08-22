@@ -1,5 +1,10 @@
 #include "Dice_Capsule.h"
 
+#include "CapsuleRunner.h"
+
+#include <chrono>
+#include <stdexcept>
+
 Dice_Capsule::Dice_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int rollSpeed, int min, int max)
 {
     _id = id;
