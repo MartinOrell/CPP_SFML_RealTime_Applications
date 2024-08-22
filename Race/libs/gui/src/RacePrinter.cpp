@@ -1,4 +1,6 @@
 #include "RacePrinter.h"
+
+#include <SFML/Window/Event.hpp>
 #include <iostream>
 
 RacePrinter::RacePrinter(int goal)
@@ -44,7 +46,7 @@ void RacePrinter::addRacer(int id, std::string filename){
         _textures.push_back(std::move(texture));
     }
     else{
-        std::cout << "Failed to load from file" << std::endl;
+        std::cout << "Failed to load from file " << filename << std::endl;
     }
 
     Racer racer;
