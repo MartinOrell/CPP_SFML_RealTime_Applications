@@ -3,7 +3,7 @@ Using another generator should be fine too.
 
 ### Generate build files
 ```
-cmake -S . -B build -G "Unix Makefiles"
+cmake -S . -B build -G "MinGW Makefiles"
 ```
 ### Build project
 ```
