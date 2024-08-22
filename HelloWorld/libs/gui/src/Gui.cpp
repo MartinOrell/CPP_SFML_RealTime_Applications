@@ -1,5 +1,7 @@
 #include "Gui.h"
 
+#include <SFML/Window/Event.hpp>
+
 Gui::Gui()
 : _window{ { 800u, 500u }, "Hello World!" }
 {
