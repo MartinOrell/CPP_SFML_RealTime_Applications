@@ -2,12 +2,13 @@
 
 #include "Capsule.h"
 
-#include "CapsuleRunner.h"
-#include "Message.h"
 #include "SendMessage.h"
-#include <chrono>
-#include <stdexcept>
+#include "Message.h"
 #include "Gui.h"
+
+namespace mrt{
+    class CapsuleRunner;
+}
 
 class Main_Capsule: public mrt::Capsule{
     public:
