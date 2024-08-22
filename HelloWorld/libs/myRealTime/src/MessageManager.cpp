@@ -1,5 +1,11 @@
 #include "MessageManager.h"
 
+#include "CapsuleRunner.h"
+#include "SendMessage.h"
+
+#include <string>
+#include <stdexcept>
+
 using namespace mrt;
 
 MessageManager::MessageManager(bool allowCrossInvoke){
@@ -20,7 +26,7 @@ void MessageManager::replaceCapsuleRunnerPtr(CapsuleRunner* to, CapsuleRunner* f
     throw std::runtime_error("MessageManager failed to find pointer during replacement");
 }
 
-void MessageManager::sendMessage(SendMessage sendMessage){
+void MessageManager::sendMessage(const SendMessage& sendMessage){
     for(auto it = _capsuleRunnerPtrs.begin(); it < _capsuleRunnerPtrs.end(); it++){
         if((*it)->isResponsible(sendMessage.toId)){
             (*it)->sendMessage(sendMessage);
@@ -30,7 +36,7 @@ void MessageManager::sendMessage(SendMessage sendMessage){
     throw std::invalid_argument("MessageManager unable to send message to id: " + std::to_string(sendMessage.toId));
 }
 
-void MessageManager::mergeOrSendMessage(SendMessage sendMessage){
+void MessageManager::mergeOrSendMessage(const SendMessage& sendMessage){
     for(auto it = _capsuleRunnerPtrs.begin(); it < _capsuleRunnerPtrs.end(); it++){
         if((*it)->isResponsible(sendMessage.toId)){
             (*it)->mergeOrSendMessage(sendMessage);
@@ -41,7 +47,7 @@ void MessageManager::mergeOrSendMessage(SendMessage sendMessage){
 
 }
 
-Message MessageManager::invokeMessage(SendMessage request){
+Message MessageManager::invokeMessage(const SendMessage& request){
     if(!_allowCrossInvoke){
         throw std::invalid_argument("Invoking messages across capsuleRunners is not allowed (can be set to allowed in MessageManager)");
     }

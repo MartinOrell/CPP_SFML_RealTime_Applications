@@ -14,12 +14,12 @@ class Main_Capsule: public mrt::Capsule{
         Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps);
         int getId();
         void start();
-        void handleMessage(mrt::Message message);
+        void handleMessage(const mrt::Message& message);
     
     private:
         void stop();
 
-        void handleTimeout(mrt::TimeoutMessage message);
+        void handleTimeout(const mrt::TimeoutMessage& message);
         void update(int timeouts);
 
         int _id;

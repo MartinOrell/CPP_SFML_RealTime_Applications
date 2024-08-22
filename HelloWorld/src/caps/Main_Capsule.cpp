@@ -12,7 +12,7 @@ int Main_Capsule::getId(){
     return _id;
 }
 
-void Main_Capsule::handleMessage(mrt::Message message){
+void Main_Capsule::handleMessage(const mrt::Message& message){
     if(std::holds_alternative<mrt::TimeoutMessage>(message)){
         handleTimeout(std::get<mrt::TimeoutMessage>(message));
         return;
@@ -21,7 +21,7 @@ void Main_Capsule::handleMessage(mrt::Message message){
     throw std::invalid_argument("Main_Capsule unable to handle message with index " + std::to_string(message.index()));
 }
 
-void Main_Capsule::handleTimeout(mrt::TimeoutMessage timeoutMessage){
+void Main_Capsule::handleTimeout(const mrt::TimeoutMessage& timeoutMessage){
     if(_updateTimerId == timeoutMessage.timerId){
         update(timeoutMessage.timeouts);
         return;
