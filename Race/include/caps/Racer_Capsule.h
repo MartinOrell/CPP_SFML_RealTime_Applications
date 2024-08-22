@@ -5,6 +5,7 @@
 #include <string>
 #include "CapsuleRunner.h"
 #include "RacerProfile.h"
+#include "SendMessage.h"
 
 class Racer_Capsule: public mrt::Capsule{
     public:
@@ -12,7 +13,7 @@ class Racer_Capsule: public mrt::Capsule{
         int getId();
         std::string getName();
         std::string getAsciiFilename();
-        void handleMessage(mrt::Message message);
+        void handleMessage(const mrt::Message& message);
         void start();
 
         void connect(int mainId);

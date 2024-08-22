@@ -16,7 +16,7 @@ class Main_Capsule: public mrt::Capsule{
         Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps, int goal);
         int getId();
         void start();
-        void handleMessage(mrt::Message message);
+        void handleMessage(const mrt::Message& message);
         
         void connectRacer(int id, std::string name, std::string filename);
     

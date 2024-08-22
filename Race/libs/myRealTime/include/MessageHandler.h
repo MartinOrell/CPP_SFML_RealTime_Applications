@@ -2,20 +2,21 @@
 
 #include <mutex>
 #include <vector>
-#include <algorithm>
 #include <optional>
-#include "SendMessage.h"
 
 namespace mrt{
+
+    struct SendMessage;
+    struct Timer;
 
     class MessageHandler{
         public:
             MessageHandler();
             MessageHandler(MessageHandler&&);
-            void addTimer(Timer);
+            void addTimer(const Timer&);
             void removeTimer(int timerId);
-            void sendMessage(SendMessage);
-            void mergeOrSendMessage(SendMessage);
+            void sendMessage(const SendMessage&);
+            void mergeOrSendMessage(const SendMessage&);
             std::optional<SendMessage> receiveMessage();
         private:
 

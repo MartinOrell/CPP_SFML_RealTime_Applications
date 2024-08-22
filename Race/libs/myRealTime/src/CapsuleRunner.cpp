@@ -1,5 +1,10 @@
 #include "CapsuleRunner.h"
+
+#include "Capsule.h"
 #include "MessageManager.h"
+#include "SendMessage.h"
+
+#include <cassert>
 
 using namespace mrt;
 
@@ -57,7 +62,7 @@ void CapsuleRunner::stop(){
     _messageHandler.sendMessage(sendMessage);
 }
 
-void CapsuleRunner::sendMessage(SendMessage message){
+void CapsuleRunner::sendMessage(const SendMessage& message){
     if(isResponsible(message.toId)){
         _messageHandler.sendMessage(message);
     }
@@ -66,7 +71,7 @@ void CapsuleRunner::sendMessage(SendMessage message){
     }
 }
 
-void CapsuleRunner::mergeOrSendMessage(SendMessage message){
+void CapsuleRunner::mergeOrSendMessage(const SendMessage& message){
     if(isResponsible(message.toId)){
         _messageHandler.mergeOrSendMessage(message);
     }
@@ -75,7 +80,7 @@ void CapsuleRunner::mergeOrSendMessage(SendMessage message){
     }
 }
 
-Message CapsuleRunner::invokeMessage(SendMessage request){
+Message CapsuleRunner::invokeMessage(const SendMessage& request){
 
     for(int i = 0; i < _capsules.size();i++){
         if(request.toId == _capsules.at(i)->getId()){
@@ -126,7 +131,7 @@ void CapsuleRunner::cancelTimer(int id){
 //handleMessage handles one message
 //Returns false if the message is to stop running
 //Returns true if successful
-bool CapsuleRunner::handleMessage(SendMessage sendMessage){
+bool CapsuleRunner::handleMessage(const SendMessage& sendMessage){
     //check if message is to this capsuleRunner
     if(sendMessage.toId == _id){
         return handleMessageToMe(sendMessage.message);
@@ -154,7 +159,7 @@ bool CapsuleRunner::handleMessage(SendMessage sendMessage){
 //handleMessageToMe handles one message sent to this capsule
 //Returns false if the message is to stop running
 //Returns true otherwise
-bool CapsuleRunner::handleMessageToMe(Message message){
+bool CapsuleRunner::handleMessageToMe(const Message& message){
     if(std::holds_alternative<VoidMessage>(message)){
         VoidMessage voidMessage = std::get<VoidMessage>(message);
         if(voidMessage == VoidMessage::EndMessage){

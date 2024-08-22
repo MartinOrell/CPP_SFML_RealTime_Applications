@@ -23,7 +23,7 @@ std::string Racer_Capsule::getAsciiFilename(){
     return _profile.asciiFilename;
 }
 
-void Racer_Capsule::handleMessage(mrt::Message message){
+void Racer_Capsule::handleMessage(const mrt::Message& message){
     if(std::holds_alternative<mrt::TimeoutMessage>(message)){
         handleTimeout(std::get<mrt::TimeoutMessage>(message));
         return;
