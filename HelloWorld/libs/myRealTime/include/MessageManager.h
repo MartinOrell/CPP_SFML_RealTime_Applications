@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Message.h"
+#include "SendMessage.h"
 #include <vector>
 
 namespace mrt{
 
     class CapsuleRunner;
-    struct SendMessage;
 
     class MessageManager{
         public:
