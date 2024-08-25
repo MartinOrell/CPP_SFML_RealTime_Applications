@@ -14,9 +14,9 @@
 class Main_Capsule: public mrt::Capsule{
     public:
         Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps, int goal);
-        int getId();
-        void start();
-        void handleMessage(const mrt::Message& message);
+        int getId() override;
+        void start() override;
+        void handleMessage(const mrt::Message&) override;
         
         void connectRacer(int id, std::string name, std::string filename);
     
@@ -24,11 +24,11 @@ class Main_Capsule: public mrt::Capsule{
         void sendStartRaceSignal(int toId);
         void sendDistanceRequest(int toId);
 
-        void handleTimeout(mrt::TimeoutMessage message);
+        void handleTimeout(const mrt::TimeoutMessage&);
 
         void handleUpdateTimerTimeout(int timeouts);
-        void handleDistanceResponse(mrt::DistanceResponse message);
-        void handleGoalReachedMessage(mrt::GoalReached message);
+        void handleDistanceResponse(const mrt::DistanceResponse&);
+        void handleGoalReachedMessage(const mrt::GoalReached);
 
         int _id;
         std::vector<int> _racerIds;

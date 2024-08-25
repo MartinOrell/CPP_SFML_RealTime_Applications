@@ -2,6 +2,6 @@
 
 using namespace mrt;
 
-bool Timer::operator<(Timer a){
-    return timeoutTime < a.timeoutTime;
+bool Timer::operator<(Timer timer){
+    return timeoutTime < timer.timeoutTime;
 }

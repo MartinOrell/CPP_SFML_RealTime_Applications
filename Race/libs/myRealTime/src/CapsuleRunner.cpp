@@ -2,8 +2,9 @@
 
 #include "Capsule.h"
 #include "MessageManager.h"
-#include "SendMessage.h"
 
+#include <stdexcept>
+#include <string>
 #include <cassert>
 
 using namespace mrt;
@@ -12,7 +13,9 @@ CapsuleRunner::CapsuleRunner(int id, MessageManager* messageManagerPtr)
 :   _id{id},
     _messageManagerPtr{messageManagerPtr},
     _nextTimerId{0}{
-        _messageManagerPtr->addCapsuleRunnerPtr(this);
+        if(_messageManagerPtr!=nullptr){
+            _messageManagerPtr->addCapsuleRunnerPtr(this);
+        }
     }
 
 CapsuleRunner::CapsuleRunner(CapsuleRunner&& rhs)
@@ -20,7 +23,9 @@ CapsuleRunner::CapsuleRunner(CapsuleRunner&& rhs)
 , _messageHandler{std::move(rhs._messageHandler)}
 , _messageManagerPtr{std::move(rhs._messageManagerPtr)}
 , _nextTimerId{std::move(rhs._nextTimerId)}{
-    _messageManagerPtr->replaceCapsuleRunnerPtr(this, &rhs);
+    if(_messageManagerPtr!=nullptr){
+        _messageManagerPtr->replaceCapsuleRunnerPtr(this, &rhs);
+    }
 }
 
 void CapsuleRunner::addCapsule(std::unique_ptr<Capsule> capsule){
@@ -65,19 +70,39 @@ void CapsuleRunner::stop(){
 void CapsuleRunner::sendMessage(const SendMessage& message){
     if(isResponsible(message.toId)){
         _messageHandler.sendMessage(message);
+        return;
     }
-    else{
-        _messageManagerPtr->sendMessage(message);
+
+    if(_messageManagerPtr == nullptr){
+        std::string errorMsg =
+            "CapsuleRunner[" +
+            std::to_string(_id) +
+            "] is not responsible for Capsule[" +
+            std::to_string(message.toId) +
+            "] and has no messageManager to send a message to that capsule";
+        throw std::logic_error(errorMsg);
     }
+
+    _messageManagerPtr->sendMessage(message);
 }
 
 void CapsuleRunner::mergeOrSendMessage(const SendMessage& message){
     if(isResponsible(message.toId)){
         _messageHandler.mergeOrSendMessage(message);
+        return;
     }
-    else{
-        _messageManagerPtr->mergeOrSendMessage(message);
+
+    if(_messageManagerPtr == nullptr){
+        std::string errorMsg =
+            "CapsuleRunner[" +
+            std::to_string(_id) +
+            "] is not responsible for Capsule[" +
+            std::to_string(message.toId) +
+            "] and has no messageManager to mergeOrSend a message to that capsule";
+        throw std::logic_error(errorMsg);
     }
+    
+    _messageManagerPtr->mergeOrSendMessage(message);
 }
 
 Message CapsuleRunner::invokeMessage(const SendMessage& request){
@@ -86,6 +111,16 @@ Message CapsuleRunner::invokeMessage(const SendMessage& request){
         if(request.toId == _capsules.at(i)->getId()){
             return _capsules.at(i)->handleInvokeMessage(request.message);
         }
+    }
+
+    if(_messageManagerPtr == nullptr){
+        std::string errorMsg =
+            "CapsuleRunner[" +
+            std::to_string(_id) +
+            "] is not responsible for Capsule[" +
+            std::to_string(request.toId) +
+            "] and has no messageManager to invoke a message to that capsule";
+        throw std::logic_error(errorMsg);
     }
 
     return _messageManagerPtr->invokeMessage(request);
@@ -119,9 +154,9 @@ int CapsuleRunner::informEvery(int toId, std::chrono::steady_clock::duration int
     return timer.id;
 }
 
-void CapsuleRunner::cancelTimer(int id){
+void CapsuleRunner::cancelTimer(int timerId){
     CancelTimer cancelTimer;
-    cancelTimer.id = id;
+    cancelTimer.timerId = timerId;
     SendMessage message;
     message.toId = _id;
     message.message = cancelTimer;
@@ -145,14 +180,22 @@ bool CapsuleRunner::handleMessage(const SendMessage& sendMessage){
         }
     }
 
+    if(_messageManagerPtr == nullptr){
+        std::string errorMsg =
+            "CapsuleRunner[" +
+            std::to_string(_id) +
+            "] is not responsible for Capsule[" +
+            std::to_string(sendMessage.toId) +
+            "] and has no messageManager to send a message to that capsule";
+        throw std::logic_error(errorMsg);
+    }
+
     //Send the message to another capsuleRunner
     if(std::holds_alternative<TimeoutMessage>(sendMessage.message)){
         _messageManagerPtr->mergeOrSendMessage(sendMessage);
+        return true;
     }
-    else{
-        _messageManagerPtr->sendMessage(sendMessage);
-    }
-    
+    _messageManagerPtr->sendMessage(sendMessage);
     return true;
 }
 
@@ -166,7 +209,12 @@ bool CapsuleRunner::handleMessageToMe(const Message& message){
             return false;
         }
         else{
-            throw std::invalid_argument("CapsuleRunner[" + std::to_string(_id) + "] can't handle Voidmessage: " + std::to_string(voidMessage));
+            std::string errorMsg =
+                "CapsuleRunner[" +
+                std::to_string(_id) + 
+                "] can't handle Voidmessage: " +
+                std::to_string(voidMessage);
+            throw std::invalid_argument(errorMsg);
         }
     }
     else if(std::holds_alternative<Timer>(message)){
@@ -175,11 +223,16 @@ bool CapsuleRunner::handleMessageToMe(const Message& message){
         return true;
     }
     else if (std::holds_alternative<CancelTimer>(message)){
-        int timerId = std::get<CancelTimer>(message).id;
+        int timerId = std::get<CancelTimer>(message).timerId;
         _messageHandler.removeTimer(timerId);
         return true;
     }
     else{
-        throw std::invalid_argument("CapsuleRunner[" + std::to_string(_id) + "] can't handle message to him with type index: " + std::to_string(message.index()));
+        std::string errorMsg =
+            "CapsuleRunner[" +
+            std::to_string(_id) +
+            "] can't handle message to him with type index: " +
+            std::to_string(message.index());
+        throw std::invalid_argument(errorMsg);
     }
 }

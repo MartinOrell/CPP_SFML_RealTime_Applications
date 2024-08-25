@@ -54,7 +54,7 @@ void Main_Capsule::handleMessage(const mrt::Message& message){
     throw std::invalid_argument("Main_Capsule unable to handle message with index " + std::to_string(message.index()));
 }
 
-void Main_Capsule::handleTimeout(mrt::TimeoutMessage timeoutMessage){
+void Main_Capsule::handleTimeout(const mrt::TimeoutMessage& timeoutMessage){
     if(_updateTimerId == timeoutMessage.timerId){
         handleUpdateTimerTimeout(timeoutMessage.timeouts);
     }
@@ -86,7 +86,7 @@ void Main_Capsule::handleUpdateTimerTimeout(int timeouts){
     _state = State::GetPositionsDuringRace;
 }
 
-void Main_Capsule::handleDistanceResponse(mrt::DistanceResponse message){
+void Main_Capsule::handleDistanceResponse(const mrt::DistanceResponse& message){
     switch(_state){
         case State::GetPositionsDuringRace:
         case State::GetPositionsAfterRace:

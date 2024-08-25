@@ -70,7 +70,7 @@ void Racer_Capsule::start(){
     _state = State::WaitForStartSignal;
 }
 
-void Racer_Capsule::handleTimeout(mrt::TimeoutMessage timeoutMessage){
+void Racer_Capsule::handleTimeout(const mrt::TimeoutMessage& timeoutMessage){
     if(_waitTimerId == timeoutMessage.timerId){
         handleWaitTimerTimeout(timeoutMessage.timeouts);
     }
