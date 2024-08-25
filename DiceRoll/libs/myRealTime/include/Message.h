@@ -11,7 +11,7 @@ namespace mrt{
     };
 
     struct CancelTimer{
-        int id;
+        int timerId;
     };
 
     enum VoidMessage{EndMessage, RequestDiceValue};

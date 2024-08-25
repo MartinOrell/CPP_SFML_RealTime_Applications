@@ -1,13 +1,12 @@
 #pragma once
 
+#include "SendMessage.h"
+#include "Timer.h"
 #include <mutex>
 #include <vector>
 #include <optional>
 
 namespace mrt{
-
-    struct SendMessage;
-    struct Timer;
 
     class MessageHandler{
         public:

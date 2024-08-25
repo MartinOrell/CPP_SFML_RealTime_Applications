@@ -11,7 +11,7 @@ namespace mrt{
         bool isRepeating;
         std::chrono::steady_clock::duration interval;
 
-        bool operator<(Timer a);
+        bool operator<(Timer);
     };
     
 }

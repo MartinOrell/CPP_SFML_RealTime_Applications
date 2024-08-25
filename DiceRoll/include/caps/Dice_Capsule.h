@@ -12,15 +12,15 @@ namespace mrt{
 class Dice_Capsule: public mrt::Capsule{
     public:
         Dice_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int rollSpeed, int min, int max);
-        int getId();
-        void start();
+        int getId() override;
+        void start() override;
         void stop();
-        void handleMessage(const mrt::Message& message);
-        mrt::Message handleInvokeMessage(const mrt::Message& message);
+        void handleMessage(const mrt::Message&) override;
+        mrt::Message handleInvokeMessage(const mrt::Message&) override;
     
     private:
 
-        void handleTimeout(mrt::TimeoutMessage message);
+        void handleTimeout(const mrt::TimeoutMessage&);
         void update(int timeouts);
         mrt::Message invokeDiceValueResponse();
 

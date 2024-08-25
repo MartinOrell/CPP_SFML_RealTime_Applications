@@ -3,31 +3,31 @@
 #include <memory>
 #include <vector>
 #include "Message.h"
+#include "SendMessage.h"
 #include "MessageHandler.h"
 
 namespace mrt{
 
     class Capsule;
     class MessageManager;
-    struct SendMessage;
 
     class CapsuleRunner{
         public:
-            CapsuleRunner(int id, MessageManager* messageManagerPtr);
+            CapsuleRunner(int id, MessageManager* messageManagerPtr = nullptr);
             CapsuleRunner(CapsuleRunner&&);
             void addCapsule(std::unique_ptr<Capsule>);
             bool isResponsible(int id);
             void run();
             void stop();
-            void sendMessage(const SendMessage& message);
+            void sendMessage(const SendMessage&);
             void mergeOrSendMessage(const SendMessage&);
-            Message invokeMessage(const SendMessage& request);
-            int informIn(int, std::chrono::steady_clock::duration);
-            int informEvery(int, std::chrono::steady_clock::duration);
-            void cancelTimer(int);
+            Message invokeMessage(const SendMessage&);
+            int informIn(int toId, std::chrono::steady_clock::duration duration);
+            int informEvery(int toId, std::chrono::steady_clock::duration interval);
+            void cancelTimer(int timerId);
         private:
-            bool handleMessage(const SendMessage& message);
-            bool handleMessageToMe(const Message& message);
+            bool handleMessage(const SendMessage&);
+            bool handleMessageToMe(const Message&);
 
             int _id;
             MessageHandler _messageHandler;

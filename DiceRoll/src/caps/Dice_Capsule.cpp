@@ -53,7 +53,7 @@ void Dice_Capsule::handleMessage(const mrt::Message& message){
     throw std::invalid_argument("Dice_Capsule unable to handle message with index " + std::to_string(message.index()));
 }
 
-void Dice_Capsule::handleTimeout(mrt::TimeoutMessage timeoutMessage){
+void Dice_Capsule::handleTimeout(const mrt::TimeoutMessage& timeoutMessage){
     if(_updateTimerId == timeoutMessage.timerId){
         update(timeoutMessage.timeouts);
         return;
