@@ -10,8 +10,8 @@ namespace mrt{
             virtual ~Capsule(){}
             virtual int getId() = 0;
             virtual void start() = 0;
-            virtual void handleMessage(const Message& message){throw std::invalid_argument("Capsule unable to handle message (missing implementation)");};
-            virtual Message handleInvokeMessage(const Message& request){throw std::invalid_argument("Capsule unable to handle invokeMessage (missing implementation)");};
+            virtual void receiveMessage(const Message& message){throw std::invalid_argument("Capsule unable to receive message (missing implementation)");};
+            virtual Message receiveInvokeMessage(const Message& request){throw std::invalid_argument("Capsule unable to receive invokeMessage (missing implementation)");};
     };
 
 }

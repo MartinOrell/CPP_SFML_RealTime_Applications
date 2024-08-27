@@ -13,7 +13,7 @@ class Racer_Capsule: public mrt::Capsule{
         int getId() override;
         std::string getName();
         std::string getAsciiFilename();
-        void handleMessage(const mrt::Message&) override;
+        void receiveMessage(const mrt::Message&) override;
         void start() override;
 
         void connect(int mainId);

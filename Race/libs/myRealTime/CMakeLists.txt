@@ -8,3 +8,4 @@ set(SRC_FILES src/CapsuleRunner.cpp src/MessageHandler.cpp src/MessageManager.cp
 add_library(myRealTime STATIC ${SRC_FILES})
 
 target_include_directories(myRealTime PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
+target_include_directories(myRealTime PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/mod_include/")
