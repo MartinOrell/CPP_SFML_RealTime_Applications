@@ -15,7 +15,7 @@ class Main_Capsule: public mrt::Capsule{
         Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps);
         int getId() override;
         void start() override;
-        void handleMessage(const mrt::Message&) override;
+        void receiveMessage(const mrt::Message&) override;
     
     private:
         void stop();

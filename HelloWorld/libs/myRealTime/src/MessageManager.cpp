@@ -33,8 +33,9 @@ void MessageManager::sendMessage(const SendMessage& sendMessage){
         }
     }
     std::string errorMsg =
-        "MessageManager unable to send message to id: " +
-        std::to_string(sendMessage.toId);
+        "MessageManager unable to send message to Capsule[" +
+        std::to_string(sendMessage.toId) +
+        "]";
     throw std::invalid_argument(errorMsg);
 }
 
@@ -46,8 +47,9 @@ void MessageManager::mergeOrSendMessage(const SendMessage& sendMessage){
         }
     }
     std::string errorMsg =
-        "MessageManager unable to mergeOrSend message to id: " +
-        std::to_string(sendMessage.toId);
+        "MessageManager unable to mergeOrSend message to Capsule[" +
+        std::to_string(sendMessage.toId) +
+        "]";
     throw std::invalid_argument(errorMsg);
 }
 
@@ -61,8 +63,9 @@ Message MessageManager::invokeMessage(const SendMessage& request){
         }
     }
     std::string errorMsg =
-        "MessageManager unable to invoke message to id: " +
-        std::to_string(request.toId);
+        "MessageManager unable to invoke message to Capsule[" +
+        std::to_string(request.toId) +
+        "]";
     throw std::invalid_argument(errorMsg);
 
 }
