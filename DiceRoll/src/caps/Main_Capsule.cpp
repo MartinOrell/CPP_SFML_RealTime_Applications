@@ -32,7 +32,7 @@ mrt::RespondDiceValue Main_Capsule::invokeDiceValue(int toId){
     return std::get<mrt::RespondDiceValue>(receivedMessage);
 }
 
-void Main_Capsule::handleMessage(const mrt::Message& message){
+void Main_Capsule::receiveMessage(const mrt::Message& message){
     if(std::holds_alternative<mrt::TimeoutMessage>(message)){
         handleTimeout(std::get<mrt::TimeoutMessage>(message));
         return;

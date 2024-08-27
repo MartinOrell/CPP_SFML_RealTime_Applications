@@ -20,7 +20,7 @@ int Dice_Capsule::getId(){
     return _id;
 }
 
-mrt::Message Dice_Capsule::handleInvokeMessage(const mrt::Message& message){
+mrt::Message Dice_Capsule::receiveInvokeMessage(const mrt::Message& message){
     if(std::holds_alternative<mrt::VoidMessage>(message)){
         mrt::VoidMessage voidMessage = std::get<mrt::VoidMessage>(message);
         if(voidMessage == mrt::VoidMessage::RequestDiceValue){
@@ -37,7 +37,7 @@ mrt::Message Dice_Capsule::invokeDiceValueResponse(){
     return response;
 }
 
-void Dice_Capsule::handleMessage(const mrt::Message& message){
+void Dice_Capsule::receiveMessage(const mrt::Message& message){
     if(std::holds_alternative<mrt::TimeoutMessage>(message)){
         handleTimeout(std::get<mrt::TimeoutMessage>(message));
         return;
