@@ -80,13 +80,17 @@ void UI::setText(std::string text){
     _displayText.setPosition(xPos,yPos);
 }
 
-Event UI::update(std::vector<int> stepPositions){
+gui::Event UI::update(std::vector<int> stepPositions){
+    auto returnEvent = gui::Event::Void;
     for (auto event = sf::Event{}; _window.pollEvent(event);)
     {
-        if (event.type == sf::Event::Closed)
-        {
-            _window.close();
-            return Event::Exit;
+        switch(event.type){
+            case sf::Event::Closed:
+                _window.close();
+                return Event::Exit;
+            case sf::Event::MouseButtonReleased:
+                returnEvent = gui::Event::StartRace;
+                break;
         }
     }
 
@@ -104,7 +108,7 @@ Event UI::update(std::vector<int> stepPositions){
     _window.draw(_goalText);
     _window.draw(_displayText);
     _window.display();
-    return Event::Void;
+    return returnEvent;
 }
 
 void UI::initTrack(){

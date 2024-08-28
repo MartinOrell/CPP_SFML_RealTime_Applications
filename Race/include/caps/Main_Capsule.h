@@ -30,7 +30,10 @@ class Main_Capsule: public mrt::Capsule{
 
         void updateRacerPosition(const mrt::DistanceResponse& message);
 
-        void update(int timeouts);
+        void startRace();
+        void updateBeforeRaceStart(int timeouts);
+        void updateDuringRace(int timeouts);
+        void updateRacerPositionBeforeRace(const mrt::DistanceResponse& message);
         void updateRacerPositionDuringRace(const mrt::DistanceResponse& message);
         void updateRacerPositionAfterRace(const mrt::DistanceResponse& message);
         void goalReached(const mrt::GoalReached&);
@@ -47,6 +50,6 @@ class Main_Capsule: public mrt::Capsule{
         int _responseCount;
         int _goal;
         int _winnerIndex;
-        enum State{WaitForUpdate, GetPositionsDuringRace, GetPositionsAfterRace, End};
+        enum State{WaitForStartInput, WaitForUpdate, GetPositionsBeforeRace, GetPositionsDuringRace, GetPositionsAfterRace, End};
         State _state;
 };

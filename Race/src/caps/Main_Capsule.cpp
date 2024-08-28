@@ -83,14 +83,21 @@ void Main_Capsule::receiveMessage(const mrt::Message& message){
 
 void Main_Capsule::handleTimeout(const mrt::TimeoutMessage& timeoutMessage){
     if(timeoutMessage.timerId == _updateTimerId){
-        if(_state == State::WaitForUpdate){
-            update(timeoutMessage.timeouts);
+        switch(_state){
+            case State::WaitForStartInput:
+                updateBeforeRaceStart(timeoutMessage.timeouts);
+                return;
+            case State::WaitForUpdate:
+                updateDuringRace(timeoutMessage.timeouts);
         }
     }
 }
 
 void Main_Capsule::handleDistanceResponse(const mrt::DistanceResponse& message){
     switch(_state){
+        case State::GetPositionsBeforeRace:
+            updateRacerPositionBeforeRace(message);
+            return;
         case State::GetPositionsDuringRace:
             updateRacerPositionDuringRace(message);
             return;
@@ -117,11 +124,16 @@ void Main_Capsule::handleGoalReachedMessage(const mrt::GoalReached& message){
 
 void Main_Capsule::start(){
     _ui.initPrint();
+    _ui.setText("Click anywhere to start race");
+    _updateTimerId = _timerRunnerPtr->informEvery(_id, _updateTime);
+    _state = State::WaitForStartInput;
+}
+
+void Main_Capsule::startRace(){
     _ui.setText("The race has started!");
     for(int i = 0; i < _racerIds.size(); i++){
         sendStartRaceSignal(_racerIds.at(i));
     }
-    _updateTimerId = _timerRunnerPtr->informEvery(_id, _updateTime);
     gui::Event event = _ui.update(_racersXPos);
     if(event == gui::Event::Exit){
         _capsuleRunnerPtr->stop();
@@ -131,13 +143,41 @@ void Main_Capsule::start(){
     _state = State::WaitForUpdate;
 }
 
-void Main_Capsule::update(int timeouts){
-    assert(_state == State::WaitForUpdate);
+void Main_Capsule::updateBeforeRaceStart(int timeouts){
+    assert(_state == State::WaitForStartInput);
+    _responseCount = 0;
+    for(int i = 0; i < _racerIds.size(); i++){
+        sendDistanceRequest(_racerIds.at(i));
+    }
+    _state = State::GetPositionsBeforeRace;
+}
+
+void Main_Capsule::updateDuringRace(int timeouts){
+    assert(_state == State::WaitForUpdate||_state);
     _responseCount = 0;
     for(int i = 0; i < _racerIds.size(); i++){
         sendDistanceRequest(_racerIds.at(i));
     }
     _state = State::GetPositionsDuringRace;
+}
+
+void Main_Capsule::updateRacerPositionBeforeRace(const mrt::DistanceResponse& message){
+    assert(_state == State::GetPositionsBeforeRace);
+    _responseCount++;
+    updateRacerPosition(message);
+    if(_responseCount >= _racerIds.size()){
+        gui::Event event = _ui.update(_racersXPos);
+        if(event == gui::Event::Exit){
+            _capsuleRunnerPtr->stop();
+            _state = State::End;
+            return;
+        }
+        if(event == gui::Event::StartRace){
+            startRace();
+            return;
+        }
+        _state = State::WaitForStartInput;
+    }
 }
 
 void Main_Capsule::updateRacerPositionDuringRace(const mrt::DistanceResponse& message){
