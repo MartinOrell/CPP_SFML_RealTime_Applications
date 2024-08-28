@@ -69,7 +69,7 @@ void UI::initText(){
     _goalText.setFillColor(sf::Color(255,255,255));
 }
 
-void UI::updateText(std::string text){
+void UI::setText(std::string text){
     _displayText.setString(text);
     sf::FloatRect textRect = _displayText.getLocalBounds();
     float x = textRect.left + textRect.width/2.f;
@@ -80,12 +80,13 @@ void UI::updateText(std::string text){
     _displayText.setPosition(xPos,yPos);
 }
 
-void UI::print(std::vector<int> stepPositions){
+Event UI::update(std::vector<int> stepPositions){
     for (auto event = sf::Event{}; _window.pollEvent(event);)
     {
         if (event.type == sf::Event::Closed)
         {
             _window.close();
+            return Event::Exit;
         }
     }
 
@@ -103,6 +104,7 @@ void UI::print(std::vector<int> stepPositions){
     _window.draw(_goalText);
     _window.draw(_displayText);
     _window.display();
+    return Event::Void;
 }
 
 void UI::initTrack(){

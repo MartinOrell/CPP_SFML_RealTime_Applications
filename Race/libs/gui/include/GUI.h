@@ -9,13 +9,15 @@
 
 namespace gui{
 
+    enum Event{Void, Exit, StartRace};
+
     class UI{
         public:
             UI(int goal);
             void addRacer(int id, std::string asciiFilename);
             void initPrint();
-            void updateText(std::string text);
-            void print(std::vector<int>);
+            void setText(std::string text);
+            Event update(std::vector<int>);
         private:
             void initTrack();
             void initRacers();

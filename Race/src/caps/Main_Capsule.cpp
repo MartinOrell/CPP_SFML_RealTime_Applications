@@ -117,12 +117,17 @@ void Main_Capsule::handleGoalReachedMessage(const mrt::GoalReached& message){
 
 void Main_Capsule::start(){
     _ui.initPrint();
-    _ui.updateText("The race has started!");
+    _ui.setText("The race has started!");
     for(int i = 0; i < _racerIds.size(); i++){
         sendStartRaceSignal(_racerIds.at(i));
     }
     _updateTimerId = _timerRunnerPtr->informEvery(_id, _updateTime);
-    _ui.print(_racersXPos);
+    gui::Event event = _ui.update(_racersXPos);
+    if(event == gui::Event::Exit){
+        _capsuleRunnerPtr->stop();
+        _state = State::End;
+        return;
+    }
     _state = State::WaitForUpdate;
 }
 
@@ -140,7 +145,12 @@ void Main_Capsule::updateRacerPositionDuringRace(const mrt::DistanceResponse& me
     _responseCount++;
     updateRacerPosition(message);
     if(_responseCount >= _racerIds.size()){
-        _ui.print(_racersXPos);
+        gui::Event event = _ui.update(_racersXPos);
+        if(event == gui::Event::Exit){
+            _capsuleRunnerPtr->stop();
+            _state = State::End;
+            return;
+        }
         _state = State::WaitForUpdate;
     }
 }
@@ -150,8 +160,8 @@ void Main_Capsule::updateRacerPositionAfterRace(const mrt::DistanceResponse& mes
     _responseCount++;
     updateRacerPosition(message);
     if(_responseCount >= _racerIds.size()-1){
-        _ui.print(_racersXPos);
-        _ui.updateText(_racerNames.at(_winnerIndex) + " won!");
+        gui::Event event = _ui.update(_racersXPos);
+        _ui.setText(_racerNames.at(_winnerIndex) + " won!");
         _capsuleRunnerPtr->stop();
         _state = State::End;
     }
