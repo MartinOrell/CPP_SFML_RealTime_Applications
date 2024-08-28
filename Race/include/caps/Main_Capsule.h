@@ -2,14 +2,14 @@
 
 #include "Capsule.h"
 
-#include "CapsuleRunner.h"
-#include <string>
-#include <iostream>
 #include "Message.h"
 #include "SendMessage.h"
-#include <chrono>
-#include <stdexcept>
-#include "RacePrinter.h"
+#include <string>
+#include "GUI.h"
+
+namespace mrt{
+    class CapsuleRunner;
+}
 
 class Main_Capsule: public mrt::Capsule{
     public:
@@ -25,10 +25,15 @@ class Main_Capsule: public mrt::Capsule{
         void sendDistanceRequest(int toId);
 
         void handleTimeout(const mrt::TimeoutMessage&);
-
-        void handleUpdateTimerTimeout(int timeouts);
         void handleDistanceResponse(const mrt::DistanceResponse&);
-        void handleGoalReachedMessage(const mrt::GoalReached);
+        void handleGoalReachedMessage(const mrt::GoalReached&);
+
+        void updateRacerPosition(const mrt::DistanceResponse& message);
+
+        void update(int timeouts);
+        void updateRacerPositionDuringRace(const mrt::DistanceResponse& message);
+        void updateRacerPositionAfterRace(const mrt::DistanceResponse& message);
+        void goalReached(const mrt::GoalReached&);
 
         int _id;
         std::vector<int> _racerIds;
@@ -38,7 +43,7 @@ class Main_Capsule: public mrt::Capsule{
         mrt::CapsuleRunner* _timerRunnerPtr;
         int _updateTimerId;
         std::chrono::steady_clock::duration _updateTime;
-        RacePrinter _racePrinter;
+        gui::UI _ui;
         int _responseCount;
         int _goal;
         int _winnerIndex;

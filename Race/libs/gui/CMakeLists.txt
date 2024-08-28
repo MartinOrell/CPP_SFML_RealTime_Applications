@@ -10,7 +10,7 @@ FetchContent_Declare(SFML
     GIT_TAG 2.6.x)
 FetchContent_MakeAvailable(SFML)
 
-add_library(gui STATIC "${CMAKE_CURRENT_SOURCE_DIR}/src/RacePrinter.cpp")
+add_library(gui STATIC "${CMAKE_CURRENT_SOURCE_DIR}/src/GUI.cpp")
 
 target_include_directories(gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 target_link_libraries(gui PUBLIC sfml-graphics)

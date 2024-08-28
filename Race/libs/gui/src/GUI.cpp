@@ -1,9 +1,11 @@
-#include "RacePrinter.h"
+#include "GUI.h"
 
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
-RacePrinter::RacePrinter(int goal)
+using namespace gui;
+
+UI::UI(int goal)
 : _window{ { 1920u, 1080u }, "Race" }
 {
     _goal = goal;
@@ -33,7 +35,7 @@ RacePrinter::RacePrinter(int goal)
     _goalLineWidth = 20.f;
 }
 
-void RacePrinter::addRacer(int id, std::string filename){
+void UI::addRacer(int id, std::string filename){
     sf::RectangleShape racerShape;
     racerShape.setSize(sf::Vector2f(100.f,100.f));
     racerShape.setFillColor(sf::Color(255,255,255));
@@ -55,12 +57,16 @@ void RacePrinter::addRacer(int id, std::string filename){
     _racers.push_back(racer);
 }
 
-void RacePrinter::initPrint(){
+void UI::initPrint(){
     initRacers();   
     initTrack();
 }
 
-void RacePrinter::print(std::vector<int> stepPositions){
+void UI::updateText(std::string text){
+
+}
+
+void UI::print(std::vector<int> stepPositions){
     for (auto event = sf::Event{}; _window.pollEvent(event);)
     {
         if (event.type == sf::Event::Closed)
@@ -84,7 +90,7 @@ void RacePrinter::print(std::vector<int> stepPositions){
     _window.display();
 }
 
-void RacePrinter::initTrack(){
+void UI::initTrack(){
 
     sf::RectangleShape track;
     track.setSize(sf::Vector2f(_window.getSize().x, _trackHeight));
@@ -134,7 +140,7 @@ void RacePrinter::initTrack(){
     
 }
 
-void RacePrinter::initRacers(){
+void UI::initRacers(){
      //Sort racers by id to give them correct positions
     std::sort(_racers.begin(),_racers.end(),[](Racer &a, Racer &b){return a.id<b.id;});
 
@@ -158,7 +164,7 @@ void RacePrinter::initRacers(){
     }
 }
 
-void RacePrinter::addLines(float xStartPos, float xEndPos, float xOffset, float y, float lineWidth, float lineHeight){
+void UI::addLines(float xStartPos, float xEndPos, float xOffset, float y, float lineWidth, float lineHeight){
     float x = xStartPos + xOffset/2.f;
     while(x < xEndPos){
         if(x >= xEndPos -lineWidth-xOffset){

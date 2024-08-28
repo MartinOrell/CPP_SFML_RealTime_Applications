@@ -5,7 +5,7 @@
 
 struct RacerProfile{
     std::string name;
-    std::string asciiFilename;
+    std::string artFilename;
     int speed;
     int stamina;
     std::chrono::steady_clock::duration reactionTime;

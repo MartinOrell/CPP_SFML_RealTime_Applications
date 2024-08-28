@@ -11,12 +11,12 @@ int main(){
 
     int numRacers = 2;
     int numRacerThreads = 2;
-    int fps = 60;
+    int fps = 3;
     int goal = 100;
 
     RacerProfile tortoiseP;
     tortoiseP.name = "The Tortoise";
-    tortoiseP.asciiFilename = "res/images/turtle.png";
+    tortoiseP.artFilename = "res/images/tortoise.png";
     tortoiseP.speed = 15;
     tortoiseP.stamina = 100;
     tortoiseP.reactionTime = std::chrono::milliseconds(600);
@@ -24,7 +24,7 @@ int main(){
 
     RacerProfile hareP;
     hareP.name = "The Hare";
-    hareP.asciiFilename = "res/images/hare.png";
+    hareP.artFilename = "res/images/hare.png";
     hareP.speed = 20;
     hareP.stamina = 60;
     hareP.reactionTime = std::chrono::milliseconds(100);
@@ -48,7 +48,7 @@ int main(){
     auto main = std::make_unique<Main_Capsule>(nextCapsuleId++, &mainCapsuleRunner, &timerRunner, fps, goal);
     for(int i = 0; i < numRacers; i++){
         auto racer = std::make_unique<Racer_Capsule>(nextCapsuleId++, &racerCapsuleRunners.at(i%numRacerThreads), &timerRunner, profiles.at(i%profiles.size()), goal);
-        main->connectRacer(racer->getId(), racer->getName(), racer->getAsciiFilename());
+        main->connectRacer(racer->getId(), racer->getName(), racer->getArtFilename());
         racer->connect(main->getId());
         racerCapsuleRunners.at(i%racerCapsuleRunners.size()).addCapsule(std::move(racer));
     }

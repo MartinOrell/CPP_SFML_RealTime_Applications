@@ -2,17 +2,21 @@
 
 #include "Capsule.h"
 
-#include <string>
-#include "CapsuleRunner.h"
-#include "RacerProfile.h"
+#include "Message.h"
 #include "SendMessage.h"
+#include <string>
+#include "RacerProfile.h"
+
+namespace mrt{
+    class CapsuleRunner;
+}
 
 class Racer_Capsule: public mrt::Capsule{
     public:
         Racer_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, RacerProfile racerProfile, int goal);
         int getId() override;
         std::string getName();
-        std::string getAsciiFilename();
+        std::string getArtFilename();
         void receiveMessage(const mrt::Message&) override;
         void start() override;
 
@@ -26,6 +30,10 @@ class Racer_Capsule: public mrt::Capsule{
         void handleDistanceRequest();
         void handleWaitTimerTimeout(int timeouts);
         void handleStepTimerTimeout(int timeouts);
+
+        void hearStartSignal();
+        void startRunning();
+        void step(int timeouts);
 
         int _id;
         int _mainId;

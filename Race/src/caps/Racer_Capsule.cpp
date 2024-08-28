@@ -1,5 +1,11 @@
 #include "Racer_Capsule.h"
 
+#include "CapsuleRunner.h"
+
+#include <chrono>
+#include <stdexcept>
+#include <cassert>
+
 Racer_Capsule::Racer_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, RacerProfile racerProfile, int goal){
     _id = id;
     _capsuleRunnerPtr = capsuleRunnerPtr;
@@ -7,7 +13,6 @@ Racer_Capsule::Racer_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::
     _profile = racerProfile;
     _stepTime = std::chrono::nanoseconds(1000000000/racerProfile.speed);
     _numSteps = 0;
-    _stamina = racerProfile.stamina;
     _goal = goal;
 }
 
@@ -19,8 +24,8 @@ std::string Racer_Capsule::getName(){
     return _profile.name;
 }
 
-std::string Racer_Capsule::getAsciiFilename(){
-    return _profile.asciiFilename;
+std::string Racer_Capsule::getArtFilename(){
+    return _profile.artFilename;
 }
 
 void Racer_Capsule::receiveMessage(const mrt::Message& message){
@@ -66,10 +71,6 @@ void Racer_Capsule::sendGoalReached(int toId){
     _capsuleRunnerPtr->sendMessage(sendMessage);
 }
 
-void Racer_Capsule::start(){
-    _state = State::WaitForStartSignal;
-}
-
 void Racer_Capsule::handleTimeout(const mrt::TimeoutMessage& timeoutMessage){
     if(_waitTimerId == timeoutMessage.timerId){
         handleWaitTimerTimeout(timeoutMessage.timeouts);
@@ -83,8 +84,7 @@ void Racer_Capsule::handleStartSignal(){
     if(_state != State::WaitForStartSignal){
         throw std::runtime_error("Racer_Capsule[" + std::to_string(_id) + "] Received StartSignal in state " + std::to_string(_state));
     }
-    _waitTimerId = _timerRunnerPtr->informIn(_id,_profile.reactionTime);
-    _state = State::ReactToStartSignal;
+    hearStartSignal();
 }
 
 void Racer_Capsule::handleDistanceRequest(){
@@ -94,37 +94,54 @@ void Racer_Capsule::handleDistanceRequest(){
 void Racer_Capsule::handleWaitTimerTimeout(int timeouts){
     switch(_state){
         case State::ReactToStartSignal:
-            _stepTimerId = _timerRunnerPtr->informEvery(_id, _stepTime);
-            _state = Running;
-            return;
         case State::Resting:
-            _stamina = _profile.stamina;
-            _stepTimerId = _timerRunnerPtr->informEvery(_id, _stepTime);
-            _state = Running;
+            startRunning();
             return;
     }
-    throw std::runtime_error("Racer_Capsule[" + std::to_string(_id) + "] Received WaitTimerTimeout in state " + std::to_string(_state));
+    std::string errorMsg =
+        "Racer_Capsule[" +
+        std::to_string(_id) +
+        "] Received WaitTimerTimeout in State[" +
+        std::to_string(_state) +
+        "]";
+    throw std::runtime_error(errorMsg);
 }
 
 void Racer_Capsule::handleStepTimerTimeout(int timeouts){
-    switch(_state){
-        case State::Running:
-            break;
-        default:
-            return;
+    if(_state == State::Running){
+        step(timeouts);
     }
+}
+
+void Racer_Capsule::start(){
+    _state = State::WaitForStartSignal;
+}
+
+void Racer_Capsule::hearStartSignal(){
+    assert(_state == State::WaitForStartSignal);
+    _waitTimerId = _timerRunnerPtr->informIn(_id,_profile.reactionTime);
+    _state = State::ReactToStartSignal;
+}
+
+void Racer_Capsule::startRunning(){
+    assert(_state == State::ReactToStartSignal||_state == State::Resting);
+    _stamina = _profile.stamina;
+    _stepTimerId = _timerRunnerPtr->informEvery(_id, _stepTime);
+    _state = State::Running;
+}
+
+void Racer_Capsule::step(int timeouts){
+    assert(_state == State::Running);
     _numSteps++;
     _stamina--;
     if(_numSteps >= _goal){
         sendGoalReached(_mainId);
         _timerRunnerPtr->cancelTimer(_stepTimerId);
         _state = State::WaitForStartSignal;
-        return;
     }
-    if(_stamina <= 0){
+    else if(_stamina <= 0){
         _timerRunnerPtr->cancelTimer(_stepTimerId);
         _waitTimerId = _timerRunnerPtr->informIn(_id, _profile.restTime);
         _state = State::Resting;
-        return;
     }
 }
