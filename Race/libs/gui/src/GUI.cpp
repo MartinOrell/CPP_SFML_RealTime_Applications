@@ -1,4 +1,4 @@
-#include "GUI.h"
+#include "Gui.h"
 
 #include <SFML/Window/Event.hpp>
 #include <iostream>

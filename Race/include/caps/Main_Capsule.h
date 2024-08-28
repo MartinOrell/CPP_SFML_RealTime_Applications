@@ -5,7 +5,7 @@
 #include "Message.h"
 #include "SendMessage.h"
 #include <string>
-#include "GUI.h"
+#include "Gui.h"
 
 namespace mrt{
     class CapsuleRunner;
