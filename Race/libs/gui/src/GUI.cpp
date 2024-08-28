@@ -60,10 +60,24 @@ void UI::addRacer(int id, std::string filename){
 void UI::initPrint(){
     initRacers();   
     initTrack();
+    initText();
+}
+
+void UI::initText(){
+    _displayText.setFont(_font);
+    _displayText.setCharacterSize(100);
+    _goalText.setFillColor(sf::Color(255,255,255));
 }
 
 void UI::updateText(std::string text){
-
+    _displayText.setString(text);
+    sf::FloatRect textRect = _displayText.getLocalBounds();
+    float x = textRect.left + textRect.width/2.f;
+    float y = textRect.top + textRect.height/2.f;
+    _displayText.setOrigin(x,y);
+    float xPos = _window.getView().getSize().x/2.f;
+    float yPos = (_window.getView().getSize().y - _trackHeight)/4.f;
+    _displayText.setPosition(xPos,yPos);
 }
 
 void UI::print(std::vector<int> stepPositions){
@@ -87,6 +101,7 @@ void UI::print(std::vector<int> stepPositions){
         _window.draw(_racers.at(i).shape);
     }
     _window.draw(_goalText);
+    _window.draw(_displayText);
     _window.display();
 }
 

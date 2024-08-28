@@ -19,6 +19,7 @@ namespace gui{
         private:
             void initTrack();
             void initRacers();
+            void initText();
             void addLines(float xStartPos, float xEndPos, float xOffset, float y, float lineWidth, float lineHeight);
 
             sf::RenderWindow _window;
@@ -31,6 +32,7 @@ namespace gui{
             std::vector<Racer> _racers;
             std::vector<std::unique_ptr<sf::Texture>> _textures;
             sf::Font _font;
+            sf::Text _displayText;
             sf::Text _goalText;
 
             int _goal;
