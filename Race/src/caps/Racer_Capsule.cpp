@@ -38,6 +38,9 @@ void Racer_Capsule::receiveMessage(const mrt::Message& message){
             case mrt::VoidMessage::StartSignal:
                 handleStartSignal();
                 return;
+            case mrt::VoidMessage::StopSignal:
+                handleStopSignal();
+                return;
             case mrt::VoidMessage::DistanceRequest:
                 handleDistanceRequest();
                 return;
@@ -89,6 +92,12 @@ void Racer_Capsule::handleStartSignal(){
         throw std::runtime_error("Racer_Capsule[" + std::to_string(_id) + "] Received StartSignal in state " + std::to_string(_state));
     }
     hearStartSignal();
+}
+
+void Racer_Capsule::handleStopSignal(){
+    if(_state != State::WaitForStartSignal){
+        stop();
+    }
 }
 
 void Racer_Capsule::handleDistanceRequest(){
@@ -148,4 +157,10 @@ void Racer_Capsule::step(int timeouts){
         _waitTimerId = _timerRunnerPtr->informIn(_id, _profile.restTime);
         _state = State::Resting;
     }
+}
+
+void Racer_Capsule::stop(){
+    assert(_state != State::WaitForStartSignal);
+    _timerRunnerPtr->cancelTimer(_stepTimerId);
+    _state = State::WaitForStartSignal;
 }

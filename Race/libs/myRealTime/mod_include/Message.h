@@ -14,7 +14,7 @@ namespace mrt{
         int timerId;
     };
 
-    enum VoidMessage{EndMessage, StartSignal, DistanceRequest, ClickMessage};
+    enum VoidMessage{EndMessage, StartSignal, StopSignal, DistanceRequest, ClickMessage};
 
     struct DistanceResponse{
         int fromId;

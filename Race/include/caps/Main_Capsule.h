@@ -24,6 +24,7 @@ class Main_Capsule: public mrt::Capsule{
     private:
         void sendStartRaceSignal(int toId);
         void sendFinishRaceMessage(int toId, int winnerId);
+        void sendStopSignal(int toId);
 
         void handleClickMessage();
         void handleGoalReachedMessage(const mrt::GoalReached&);

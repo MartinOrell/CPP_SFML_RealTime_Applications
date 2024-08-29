@@ -39,6 +39,13 @@ void Main_Capsule::sendFinishRaceMessage(int toId, int winnerId){
     _capsuleRunnerPtr->sendMessage(sendMessage);
 }
 
+void Main_Capsule::sendStopSignal(int toId){
+    mrt::SendMessage sendMessage;
+    sendMessage.toId = toId;
+    sendMessage.message = mrt::VoidMessage::StopSignal;
+    _capsuleRunnerPtr->sendMessage(sendMessage);
+}
+
 void Main_Capsule::receiveMessage(const mrt::Message& message){
     if(std::holds_alternative<mrt::VoidMessage>(message)){
         auto voidMessage = std::get<mrt::VoidMessage>(message);
@@ -96,5 +103,10 @@ void Main_Capsule::startRace(){
 void Main_Capsule::goalReached(const mrt::GoalReached& message){
     assert(_state == State::Racing);
     sendFinishRaceMessage(_uiId, message.racerId);
+    for(int i = 0; i < _racerIds.size(); i++){
+        if(i != message.racerId){
+            sendStopSignal(_racerIds.at(i));
+        }
+    }
     _state = State::End;
 }

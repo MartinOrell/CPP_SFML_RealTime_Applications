@@ -28,6 +28,7 @@ class Racer_Capsule: public mrt::Capsule{
 
         void handleTimeout(const mrt::TimeoutMessage&);
         void handleStartSignal();
+        void handleStopSignal();
         void handleDistanceRequest();
         void handleWaitTimerTimeout(int timeouts);
         void handleStepTimerTimeout(int timeouts);
@@ -35,6 +36,7 @@ class Racer_Capsule: public mrt::Capsule{
         void hearStartSignal();
         void startRunning();
         void step(int timeouts);
+        void stop();
 
         int _id;
         int _mainId;
