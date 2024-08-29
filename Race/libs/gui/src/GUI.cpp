@@ -89,7 +89,7 @@ gui::Event UI::update(std::vector<int> stepPositions){
                 _window.close();
                 return Event::Exit;
             case sf::Event::MouseButtonReleased:
-                returnEvent = gui::Event::StartRace;
+                returnEvent = gui::Event::Click;
                 break;
         }
     }

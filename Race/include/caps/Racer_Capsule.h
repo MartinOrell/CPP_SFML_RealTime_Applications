@@ -20,7 +20,8 @@ class Racer_Capsule: public mrt::Capsule{
         void receiveMessage(const mrt::Message&) override;
         void start() override;
 
-        void connect(int mainId);
+        void connectMain(int mainId);
+        void connectUI(int uiId);
     private:
         void sendDistanceResponse(int toId);
         void sendGoalReached(int toId);
@@ -37,6 +38,7 @@ class Racer_Capsule: public mrt::Capsule{
 
         int _id;
         int _mainId;
+        int _uiId;
         mrt::CapsuleRunner* _capsuleRunnerPtr;
         mrt::CapsuleRunner* _timerRunnerPtr;
         RacerProfile _profile;

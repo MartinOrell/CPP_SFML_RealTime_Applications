@@ -48,8 +48,12 @@ void Racer_Capsule::receiveMessage(const mrt::Message& message){
     throw std::invalid_argument("Racer_Capsule[" + std::to_string(_id) + "] unable to handle message with index " + std::to_string(message.index()));
 }
 
-void Racer_Capsule::connect(int mainId){
+void Racer_Capsule::connectMain(int mainId){
     _mainId = mainId;
+}
+
+void Racer_Capsule::connectUI(int uiId){
+    _uiId = uiId;
 }
 
 void Racer_Capsule::sendDistanceResponse(int toId){
@@ -64,7 +68,7 @@ void Racer_Capsule::sendDistanceResponse(int toId){
 
 void Racer_Capsule::sendGoalReached(int toId){
     mrt::GoalReached outMessage;
-    outMessage.fromId = _id;
+    outMessage.racerId = _id;
     mrt::SendMessage sendMessage;
     sendMessage.toId = toId;
     sendMessage.message = outMessage;
@@ -88,7 +92,7 @@ void Racer_Capsule::handleStartSignal(){
 }
 
 void Racer_Capsule::handleDistanceRequest(){
-    sendDistanceResponse(_mainId);
+    sendDistanceResponse(_uiId);
 }
 
 void Racer_Capsule::handleWaitTimerTimeout(int timeouts){

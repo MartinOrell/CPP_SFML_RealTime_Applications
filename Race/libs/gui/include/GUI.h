@@ -9,7 +9,7 @@
 
 namespace gui{
 
-    enum Event{Void, Exit, StartRace};
+    enum Event{Void, Exit, Click};
 
     class UI{
         public:

@@ -6,7 +6,7 @@ add_subdirectory("libs/gui")
 project(main)
 set(CMAKE_CXX_STANDARD 20)
 
-set(SRC_FILES src/main.cpp src/caps/Main_Capsule.cpp src/caps/Racer_Capsule.cpp)
+set(SRC_FILES src/main.cpp src/caps/Main_Capsule.cpp src/caps/Racer_Capsule.cpp src/caps/UI_Capsule.cpp)
 
 add_executable(main ${SRC_FILES})
 

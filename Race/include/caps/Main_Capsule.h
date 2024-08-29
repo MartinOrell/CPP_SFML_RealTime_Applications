@@ -13,43 +13,28 @@ namespace mrt{
 
 class Main_Capsule: public mrt::Capsule{
     public:
-        Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, int fps, int goal);
+        Main_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr);
         int getId() override;
         void start() override;
         void receiveMessage(const mrt::Message&) override;
         
-        void connectRacer(int id, std::string name, std::string filename);
+        void connectUI(int uiId);
+        void connectRacer(int id);
     
     private:
         void sendStartRaceSignal(int toId);
-        void sendDistanceRequest(int toId);
+        void sendFinishRaceMessage(int toId, int winnerId);
 
-        void handleTimeout(const mrt::TimeoutMessage&);
-        void handleDistanceResponse(const mrt::DistanceResponse&);
+        void handleClickMessage();
         void handleGoalReachedMessage(const mrt::GoalReached&);
 
-        void updateRacerPosition(const mrt::DistanceResponse& message);
-
         void startRace();
-        void updateBeforeRaceStart(int timeouts);
-        void updateDuringRace(int timeouts);
-        void updateRacerPositionBeforeRace(const mrt::DistanceResponse& message);
-        void updateRacerPositionDuringRace(const mrt::DistanceResponse& message);
-        void updateRacerPositionAfterRace(const mrt::DistanceResponse& message);
         void goalReached(const mrt::GoalReached&);
 
         int _id;
+        int _uiId;
         std::vector<int> _racerIds;
-        std::vector<std::string> _racerNames;
-        std::vector<int> _racersXPos;
         mrt::CapsuleRunner* _capsuleRunnerPtr;
-        mrt::CapsuleRunner* _timerRunnerPtr;
-        int _updateTimerId;
-        std::chrono::steady_clock::duration _updateTime;
-        gui::UI _ui;
-        int _responseCount;
-        int _goal;
-        int _winnerIndex;
-        enum State{WaitForStartInput, WaitForUpdate, GetPositionsBeforeRace, GetPositionsDuringRace, GetPositionsAfterRace, End};
+        enum State{WaitForStartInput, Racing, End};
         State _state;
 };

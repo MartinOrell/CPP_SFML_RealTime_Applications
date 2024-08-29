@@ -5,13 +5,14 @@
 #include <vector>
 #include "Main_Capsule.h"
 #include "Racer_Capsule.h"
+#include "UI_Capsule.h"
 #include "RacerProfile.h"
 
 int main(){
 
     int numRacers = 2;
     int numRacerThreads = 2;
-    int fps = 3;
+    int fps = 60;
     int goal = 100;
 
     RacerProfile tortoiseP;
@@ -45,15 +46,21 @@ int main(){
         racerCapsuleRunners.push_back(mrt::CapsuleRunner(nextCapsuleId++, &messageManager));
     }
     mrt::CapsuleRunner timerRunner(nextCapsuleId++, &messageManager);
-    auto main = std::make_unique<Main_Capsule>(nextCapsuleId++, &mainCapsuleRunner, &timerRunner, fps, goal);
+    auto main = std::make_unique<Main_Capsule>(nextCapsuleId++, &mainCapsuleRunner);
+    auto ui = std::make_unique<UI_Capsule>(nextCapsuleId++, &mainCapsuleRunner, &timerRunner, fps, goal);
+    main->connectUI(ui->getId());
+    ui->connectMain(main->getId());
     for(int i = 0; i < numRacers; i++){
         auto racer = std::make_unique<Racer_Capsule>(nextCapsuleId++, &racerCapsuleRunners.at(i%numRacerThreads), &timerRunner, profiles.at(i%profiles.size()), goal);
-        main->connectRacer(racer->getId(), racer->getName(), racer->getArtFilename());
-        racer->connect(main->getId());
+        main->connectRacer(racer->getId());
+        ui->connectRacer(racer->getId(), racer->getName(), racer->getArtFilename());
+        racer->connectMain(main->getId());
+        racer->connectUI(ui->getId());
         racerCapsuleRunners.at(i%racerCapsuleRunners.size()).addCapsule(std::move(racer));
     }
 
     mainCapsuleRunner.addCapsule(std::move(main));
+    mainCapsuleRunner.addCapsule(std::move(ui));
 
     std::jthread timerThread = std::jthread([&timerRunner](){timerRunner.run();});
     std::vector<std::jthread> racerThreads;
