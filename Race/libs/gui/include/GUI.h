@@ -14,7 +14,7 @@ namespace gui{
     class UI{
         public:
             UI(int goal);
-            void addRacer(int id, std::string asciiFilename);
+            void addRacer(int id, std::string filename);
             void initPrint();
             void setText(std::string text);
             Event update(std::vector<int>);
