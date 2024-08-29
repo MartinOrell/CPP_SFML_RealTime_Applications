@@ -23,10 +23,9 @@ void Main_Capsule::connectRacer(int id){
 }
 
 void Main_Capsule::sendStartRaceSignal(int toId){
-    mrt::VoidMessage outMessage = mrt::VoidMessage::StartSignal;
     mrt::SendMessage sendMessage;
     sendMessage.toId = toId;
-    sendMessage.message = outMessage;
+    sendMessage.message = mrt::VoidMessage::StartSignal;
     _capsuleRunnerPtr->sendMessage(sendMessage);
 }
 

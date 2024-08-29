@@ -6,15 +6,13 @@
 #include <stdexcept>
 #include <cassert>
 
-Racer_Capsule::Racer_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, RacerProfile racerProfile, int goal){
-    _id = id;
-    _capsuleRunnerPtr = capsuleRunnerPtr;
-    _timerRunnerPtr = timerRunnerPtr;
-    _profile = racerProfile;
-    _stepTime = std::chrono::nanoseconds(1000000000/racerProfile.speed);
-    _numSteps = 0;
-    _goal = goal;
-}
+Racer_Capsule::Racer_Capsule(int id, mrt::CapsuleRunner* capsuleRunnerPtr, mrt::CapsuleRunner* timerRunnerPtr, RacerProfile racerProfile, int goal)
+: _id{id}
+, _capsuleRunnerPtr{capsuleRunnerPtr}
+, _timerRunnerPtr{timerRunnerPtr}
+, _profile{racerProfile}
+, _stepTime{std::chrono::nanoseconds(1000000000/racerProfile.speed)}
+, _goal{goal}{}
 
 int Racer_Capsule::getId(){
     return _id;
@@ -26,29 +24,6 @@ std::string Racer_Capsule::getName(){
 
 std::string Racer_Capsule::getArtFilename(){
     return _profile.artFilename;
-}
-
-void Racer_Capsule::receiveMessage(const mrt::Message& message){
-    if(std::holds_alternative<mrt::TimeoutMessage>(message)){
-        handleTimeout(std::get<mrt::TimeoutMessage>(message));
-        return;
-    }
-    else if(std::holds_alternative<mrt::VoidMessage>(message)){
-        switch(std::get<mrt::VoidMessage>(message)){
-            case mrt::VoidMessage::StartSignal:
-                handleStartSignal();
-                return;
-            case mrt::VoidMessage::StopSignal:
-                handleStopSignal();
-                return;
-            case mrt::VoidMessage::DistanceRequest:
-                handleDistanceRequest();
-                return;
-            default:
-                throw std::invalid_argument("Racer_Capsule[" + std::to_string(_id) + "] unable to handle voidMessage with id " + std::to_string(std::get<mrt::VoidMessage>(message)));
-        }
-    }
-    throw std::invalid_argument("Racer_Capsule[" + std::to_string(_id) + "] unable to handle message with index " + std::to_string(message.index()));
 }
 
 void Racer_Capsule::connectMain(int mainId){
@@ -78,6 +53,41 @@ void Racer_Capsule::sendGoalReached(int toId){
     _capsuleRunnerPtr->sendMessage(sendMessage);
 }
 
+void Racer_Capsule::receiveMessage(const mrt::Message& message){
+    if(std::holds_alternative<mrt::TimeoutMessage>(message)){
+        handleTimeout(std::get<mrt::TimeoutMessage>(message));
+        return;
+    }
+    if(std::holds_alternative<mrt::VoidMessage>(message)){
+        auto voidMessage = std::get<mrt::VoidMessage>(message);
+        switch(voidMessage){
+            case mrt::VoidMessage::StartSignal:
+                handleStartSignal();
+                return;
+            case mrt::VoidMessage::StopSignal:
+                handleStopSignal();
+                return;
+            case mrt::VoidMessage::DistanceRequest:
+                handleDistanceRequest();
+                return;
+        }
+        std::string errorMsg =
+            "Racer_Capsule[" +
+            std::to_string(_id) +
+            "] unable to receive VoidMessage[" +
+            std::to_string(voidMessage) +
+            "]";
+        throw std::invalid_argument(errorMsg);
+    }
+    std::string errorMsg =
+        "Racer_Capsule[" +
+        std::to_string(_id) +
+        "] unable to receive Message[" +
+        std::to_string(message.index()) +
+        "]";
+    throw std::invalid_argument(errorMsg);
+}
+
 void Racer_Capsule::handleTimeout(const mrt::TimeoutMessage& timeoutMessage){
     if(_waitTimerId == timeoutMessage.timerId){
         handleWaitTimerTimeout(timeoutMessage.timeouts);
@@ -88,10 +98,9 @@ void Racer_Capsule::handleTimeout(const mrt::TimeoutMessage& timeoutMessage){
 }
 
 void Racer_Capsule::handleStartSignal(){
-    if(_state != State::WaitForStartSignal){
-        throw std::runtime_error("Racer_Capsule[" + std::to_string(_id) + "] Received StartSignal in state " + std::to_string(_state));
+    if(_state == State::WaitForStartSignal){
+        hearStartSignal();
     }
-    hearStartSignal();
 }
 
 void Racer_Capsule::handleStopSignal(){
@@ -109,15 +118,7 @@ void Racer_Capsule::handleWaitTimerTimeout(int timeouts){
         case State::ReactToStartSignal:
         case State::Resting:
             startRunning();
-            return;
     }
-    std::string errorMsg =
-        "Racer_Capsule[" +
-        std::to_string(_id) +
-        "] Received WaitTimerTimeout in State[" +
-        std::to_string(_state) +
-        "]";
-    throw std::runtime_error(errorMsg);
 }
 
 void Racer_Capsule::handleStepTimerTimeout(int timeouts){
@@ -132,6 +133,7 @@ void Racer_Capsule::start(){
 
 void Racer_Capsule::hearStartSignal(){
     assert(_state == State::WaitForStartSignal);
+    _numSteps = 0;
     _waitTimerId = _timerRunnerPtr->informIn(_id,_profile.reactionTime);
     _state = State::ReactToStartSignal;
 }
